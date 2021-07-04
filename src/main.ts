@@ -105,7 +105,7 @@ class MainScene extends Scene3D {
     }
 
     const boundary = createBoundaryBoxes(500)
-    this.add.existing(boundary)
+    // this.add.existing(boundary)
     this.physics.add.existing(boundary, {collisionFlags: 1, mass: 10000, shape: 'hacd'})
 
     for (let i=0; i< 200; i++) {

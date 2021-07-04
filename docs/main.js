@@ -49488,7 +49488,6 @@
         return boundaryBoxes;
       };
       const boundary = createBoundaryBoxes(500);
-      this.add.existing(boundary);
       this.physics.add.existing(boundary, { collisionFlags: 1, mass: 1e4, shape: "hacd" });
       for (let i = 0; i < 200; i++) {
         const particle = new ParticleBase();
