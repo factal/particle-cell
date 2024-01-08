@@ -49267,14 +49267,14 @@
     _frictionForce;
     _v;
     worldRange;
-    constructor(kind = 0, friction = 0.1, color = 13840391, worldRange = 100) {
+    constructor(kind = 0, friction = 0.1, color = 16777215, worldRange = 100) {
       super();
       this.kind = kind;
       this.friction = friction;
       this._frictionForce = new Vector3();
       this.worldRange = worldRange;
       this._v = new Vector3();
-      const geometry = new SphereGeometry(0.5, 9, 9);
+      const geometry = new SphereGeometry(0.5, 2, 2);
       const lineGeometry = new WireframeGeometry2(geometry);
       const lineMaterial = new LineMaterial({ color, linewidth: 1.5, dashed: false });
       lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
@@ -49432,7 +49432,6 @@
       this.composer.addPass(renderPass);
       this.composer.addPass(fxaaPass);
       this.composer.addPass(bloomPass);
-      this.composer.addPass(filmPass);
       this.physics.setGravity(0, 0, 0);
     }
     async create() {

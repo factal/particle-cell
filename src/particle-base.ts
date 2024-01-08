@@ -15,7 +15,7 @@ export default class ParticleBase extends ExtendedObject3D {
 
   worldRange: number
 
-  constructor(kind: number=0, friction: number=0.1, color: number=0xd33007, worldRange: number=100) {
+  constructor(kind: number=0, friction: number=0.1, color: number=0xFFFFFF, worldRange: number=100) {
     super()
 
     this.kind = kind
@@ -26,7 +26,7 @@ export default class ParticleBase extends ExtendedObject3D {
 
     this._v = new THREE.Vector3()
 
-    const geometry = new THREE.SphereGeometry(0.5, 9, 9)
+    const geometry = new THREE.SphereGeometry(0.5, 2, 2)
 
     const lineGeometry = new WireframeGeometry2(geometry)
     const lineMaterial = new LineMaterial({color: color, linewidth: 1.5, dashed: false})

@@ -41,7 +41,6 @@ class MainScene extends Scene3D {
     this.composer.addPass(renderPass)
     this.composer.addPass(fxaaPass)
     this.composer.addPass(bloomPass)
-    this.composer.addPass(filmPass)
 
     this.physics.setGravity(0, 0, 0)
   }
