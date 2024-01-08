@@ -64,7 +64,7 @@ export default class ParticleBase extends ExtendedObject3D {
         if (force < 0) force /= 5
         direction.multiplyScalar( force )
         this.body.applyForce(direction.x, direction.y, direction.z)
-          break
+        break
       default:
         // pass
         break
