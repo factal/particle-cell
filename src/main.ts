@@ -8,9 +8,9 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial'
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe'
 import { WireframeGeometry2 } from 'three/examples/jsm/lines/WireframeGeometry2'
 
-import { EffectComposer, ExtendedGroup, ExtendedMesh, ExtendedObject3D, PhysicsLoader, Project, RenderPass, Scene3D, ShaderPass } from 'enable3d'
+import { EffectComposer, ExtendedObject3D, PhysicsLoader, Project, RenderPass, Scene3D, ShaderPass } from 'enable3d'
 
-import { Particle1, Particle2 } from './particle'
+import { Particle1, Particle2, Particle3 } from './particle'
 import ParticleBase from './particle-base'
 import ParticleHandler from './particle-handler'
 
@@ -107,23 +107,30 @@ class MainScene extends Scene3D {
     // this.add.existing(boundary)
     this.physics.add.existing(boundary, {collisionFlags: 1, mass: 10000, shape: 'hacd'})
 
-    for (let i=0; i< 200; i++) {
+    for (let i=0; i< 100; i++) {
       const particle = new ParticleBase()
-      particle.position.set((Math.random() - 1/2) * 200, (Math.random() - 1/2) * 200, (Math.random() - 1/2) * 200)
+      particle.position.set((Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
 
       this.particleHandler.addParticle(particle)
     }
 
-    for (let i=0; i< 50; i++) {
+    for (let i=0; i< 100; i++) {
       const particle = new Particle1()
-      particle.position.set((Math.random() - 1/2) * 300 , (Math.random() - 1/2) * 300, (Math.random() - 1/2) * 300)
+      particle.position.set((Math.random() - 1/2) * 100 , (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
 
       this.particleHandler.addParticle(particle)
     }
 
-    for (let i=0; i< 50; i++) {
+    for (let i=0; i< 100; i++) {
       const particle = new Particle2()
-      particle.position.set((Math.random() - 1/2) * 300 , (Math.random() - 1/2) * 300, (Math.random() - 1/2) * 300)
+      particle.position.set((Math.random() - 1/2) * 100 , (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
+
+      this.particleHandler.addParticle(particle)
+    }
+
+    for (let i=0; i< 100; i++) {
+      const particle = new Particle3()
+      particle.position.set((Math.random() - 1/2) * 100 , (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
 
       this.particleHandler.addParticle(particle)
     }

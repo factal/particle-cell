@@ -65,3 +65,49 @@ export class Particle2 extends ParticleBase {
     }
   }
 }
+
+export class Particle3 extends ParticleBase {
+  constructor() {
+    super(3, 0.1, 0xdffc03)
+  }
+
+  reaction(particle: ParticleBase) {
+    const direction = this._v.subVectors(particle.position, this.position)
+    const dist = direction.length() / 2
+    direction.normalize()
+
+    let force
+
+    switch (particle.kind) {
+      case 0:
+        force = 1 / dist ** 2
+        direction.multiplyScalar(-1 * force )
+        this.body.applyForce(direction.x, direction.y, direction.z)
+        // force = (20 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / (3 ** (dist - 5))
+        // direction.multiplyScalar( force )
+        // this.body.applyForce(direction.x, direction.y, direction.z)
+        break
+      case 1:
+        // break
+        
+        force = 10 / dist
+        direction.multiplyScalar( force )
+        this.body.applyForce(direction.x, direction.y, direction.z)
+        break
+      case 2:
+        // force = 1 / dist
+        // direction.multiplyScalar( force )
+        // this.body.applyForce(direction.x, direction.y, direction.z)
+        break
+      case 3:
+        force = (10 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / (3 ** (dist - 5))
+        direction.multiplyScalar( force )
+        this.body.applyForce(direction.x, direction.y, direction.z)
+        break
+
+      default:
+        // pass
+        break
+    }
+  }
+}

@@ -49290,7 +49290,7 @@
       direction.normalize();
       switch (particle.kind) {
         case 0:
-          force = (3 * dist * Math.log(1.35) - 15 * Math.log(1.35) - 3) / 1.35 ** (dist - 5);
+          force = (3 * dist - 30) / 2 ** (dist - 8);
           if (force < 0)
             force /= 3;
           direction.multiplyScalar(force);
@@ -49374,6 +49374,38 @@
         case 2:
           direction.multiplyScalar((4 / dist) ** 2);
           direction.multiplyScalar(-1);
+          this.body.applyForce(direction.x, direction.y, direction.z);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+  var Particle3 = class extends ParticleBase {
+    constructor() {
+      super(3, 0.1, 14679043);
+    }
+    reaction(particle) {
+      const direction = this._v.subVectors(particle.position, this.position);
+      const dist = direction.length() / 2;
+      direction.normalize();
+      let force;
+      switch (particle.kind) {
+        case 0:
+          force = 1 / dist ** 2;
+          direction.multiplyScalar(-1 * force);
+          this.body.applyForce(direction.x, direction.y, direction.z);
+          break;
+        case 1:
+          force = 10 / dist;
+          direction.multiplyScalar(force);
+          this.body.applyForce(direction.x, direction.y, direction.z);
+          break;
+        case 2:
+          break;
+        case 3:
+          force = (10 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / 3 ** (dist - 5);
+          direction.multiplyScalar(force);
           this.body.applyForce(direction.x, direction.y, direction.z);
           break;
         default:
@@ -49488,19 +49520,24 @@
       };
       const boundary = createBoundaryBoxes(500);
       this.physics.add.existing(boundary, { collisionFlags: 1, mass: 1e4, shape: "hacd" });
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new ParticleBase();
-        particle.position.set((Math.random() - 1 / 2) * 200, (Math.random() - 1 / 2) * 200, (Math.random() - 1 / 2) * 200);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new Particle1();
-        particle.position.set((Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new Particle2();
-        particle.position.set((Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
+        this.particleHandler.addParticle(particle);
+      }
+      for (let i = 0; i < 100; i++) {
+        const particle = new Particle3();
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
       const resize = () => {

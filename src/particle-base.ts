@@ -49,7 +49,8 @@ export default class ParticleBase extends ExtendedObject3D {
 
     switch (particle.kind) {
       case 0:
-        force = (3 * dist * Math.log(1.35) - 15 * Math.log(1.35) - 3) / (1.35 ** (dist - 5))
+        // force = (3 * dist * Math.log(1.35) - 15 * Math.log(1.35) - 3) / (1.35 ** (dist - 5))
+        force = (3*dist-30) / 2 ** (dist - 8)
         if (force < 0) force /= 3
         direction.multiplyScalar( force )
         this.body.applyForce(direction.x, direction.y, direction.z)
