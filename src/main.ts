@@ -10,7 +10,7 @@ import { WireframeGeometry2 } from 'three/examples/jsm/lines/WireframeGeometry2'
 
 import { EffectComposer, ExtendedObject3D, PhysicsLoader, Project, RenderPass, Scene3D, ShaderPass } from 'enable3d'
 
-import { Particle1, Particle2, Particle3 } from './particle'
+import { Particle1, Particle2, Particle3, Particle4 } from './particle'
 import ParticleBase from './particle-base'
 import ParticleHandler from './particle-handler'
 
@@ -130,6 +130,13 @@ class MainScene extends Scene3D {
 
     for (let i=0; i< 100; i++) {
       const particle = new Particle3()
+      particle.position.set((Math.random() - 1/2) * 100 , (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
+
+      this.particleHandler.addParticle(particle)
+    }
+
+    for (let i=0; i< 100; i++) {
+      const particle = new Particle4()
       particle.position.set((Math.random() - 1/2) * 100 , (Math.random() - 1/2) * 100, (Math.random() - 1/2) * 100)
 
       this.particleHandler.addParticle(particle)

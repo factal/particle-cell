@@ -49261,20 +49261,29 @@
   });
 
   // src/particle-base.ts
+  var interactionMat = [];
+  for (let i = 0; i < 5; i++) {
+    const temp = [];
+    for (let j = 0; j < 5; j++) {
+      temp.push(2 * (Math.random() - 0.5));
+    }
+    interactionMat.push(temp);
+  }
+  console.log(interactionMat);
   var ParticleBase = class extends ExtendedObject3D {
     kind;
     friction;
     _frictionForce;
     _v;
     worldRange;
-    constructor(kind = 0, friction = 0.1, color = 13840391, worldRange = 100) {
+    constructor(kind = 0, friction = 0.1, color = 16777215, worldRange = 100) {
       super();
       this.kind = kind;
       this.friction = friction;
       this._frictionForce = new Vector3();
       this.worldRange = worldRange;
       this._v = new Vector3();
-      const geometry = new SphereGeometry(0.5, 9, 9);
+      const geometry = new SphereGeometry(0.5, 2, 2);
       const lineGeometry = new WireframeGeometry2(geometry);
       const lineMaterial = new LineMaterial({ color, linewidth: 1.5, dashed: false });
       lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
@@ -49285,32 +49294,12 @@
     }
     reaction(particle) {
       const direction = this._v.subVectors(particle.position, this.position);
-      const dist = direction.length();
+      const dist = direction.length() / 50;
       let force;
       direction.normalize();
-      switch (particle.kind) {
-        case 0:
-          force = (3 * dist * Math.log(1.35) - 15 * Math.log(1.35) - 3) / 1.35 ** (dist - 5);
-          if (force < 0)
-            force /= 3;
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        case 1:
-          force = (10 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / 1.35 ** (dist - 5);
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        case 2:
-          force = (3 * dist * Math.log(1.35) - 30 * Math.log(1.35) - 3) / 1.35 ** (dist - 10);
-          if (force < 0)
-            force /= 5;
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        default:
-          break;
-      }
+      force = calcForce(dist, interactionMat[this.kind][particle.kind]);
+      direction.multiplyScalar(force);
+      this.body.applyForce(direction.x, direction.y, direction.z);
     }
     update() {
       this._frictionForce.set(this.body.velocity.x, this.body.velocity.y, this.body.velocity.z);
@@ -49321,64 +49310,38 @@
       this.body.applyTorque(this._frictionForce.x, this._frictionForce.y, this._frictionForce.z);
     }
   };
+  function calcForce(r, a) {
+    const beta = 0.3;
+    const max = 1;
+    if (r < beta) {
+      return r / beta - 1;
+    } else if (beta < r && r < max) {
+      return a * (1 - Math.abs(2 * r - 1 - beta) / (1 - beta));
+    }
+    {
+      return 0;
+    }
+  }
 
   // src/particle.ts
   var Particle1 = class extends ParticleBase {
     constructor() {
       super(1, 0.1, 5374972);
     }
-    reaction(particle) {
-      const direction = this._v.subVectors(particle.position, this.position);
-      const dist = direction.length() / 2;
-      direction.normalize();
-      let force;
-      switch (particle.kind) {
-        case 0:
-          force = (10 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / 1.35 ** (dist - 5);
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        case 1:
-          force = (3 * dist * Math.log(1.35) - 9 * Math.log(1.35) - 3) / 1.35 ** (dist - 3);
-          if (force < 0)
-            force /= 3;
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        case 2:
-          break;
-        default:
-          break;
-      }
-    }
   };
   var Particle2 = class extends ParticleBase {
     constructor() {
       super(2, 0.1, 646818);
     }
-    reaction(particle) {
-      const direction = this._v.subVectors(particle.position, this.position);
-      const dist = direction.length() / 2;
-      direction.normalize();
-      let force;
-      switch (particle.kind) {
-        case 0:
-          force = (3 * dist * Math.log(1.35) - 30 * Math.log(1.35) - 3) / 1.35 ** (dist - 10);
-          if (force < 0)
-            force /= 5;
-          direction.multiplyScalar(force);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        case 1:
-          break;
-        case 2:
-          direction.multiplyScalar((4 / dist) ** 2);
-          direction.multiplyScalar(-1);
-          this.body.applyForce(direction.x, direction.y, direction.z);
-          break;
-        default:
-          break;
-      }
+  };
+  var Particle3 = class extends ParticleBase {
+    constructor() {
+      super(3, 0.1, 14679043);
+    }
+  };
+  var Particle4 = class extends ParticleBase {
+    constructor() {
+      super(4, 0.1, 16722784);
     }
   };
 
@@ -49432,7 +49395,6 @@
       this.composer.addPass(renderPass);
       this.composer.addPass(fxaaPass);
       this.composer.addPass(bloomPass);
-      this.composer.addPass(filmPass);
       this.physics.setGravity(0, 0, 0);
     }
     async create() {
@@ -49489,19 +49451,29 @@
       };
       const boundary = createBoundaryBoxes(500);
       this.physics.add.existing(boundary, { collisionFlags: 1, mass: 1e4, shape: "hacd" });
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new ParticleBase();
-        particle.position.set((Math.random() - 1 / 2) * 200, (Math.random() - 1 / 2) * 200, (Math.random() - 1 / 2) * 200);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new Particle1();
-        particle.position.set((Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 100; i++) {
         const particle = new Particle2();
-        particle.position.set((Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300, (Math.random() - 1 / 2) * 300);
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
+        this.particleHandler.addParticle(particle);
+      }
+      for (let i = 0; i < 100; i++) {
+        const particle = new Particle3();
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
+        this.particleHandler.addParticle(particle);
+      }
+      for (let i = 0; i < 100; i++) {
+        const particle = new Particle4();
+        particle.position.set((Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100, (Math.random() - 1 / 2) * 100);
         this.particleHandler.addParticle(particle);
       }
       const resize = () => {

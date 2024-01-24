@@ -6,6 +6,19 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial'
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe'
 import { WireframeGeometry2 } from 'three/examples/jsm/lines/WireframeGeometry2'
 
+
+export const interactionMat: number[][] = []
+
+for (let i=0; i<5; i++) {
+  const temp: number[] = []
+  for (let j=0; j<5; j++) {
+    temp.push(2 * (Math.random() - 0.5))
+  }
+  interactionMat.push(temp)
+}
+
+console.log(interactionMat)
+
 export default class ParticleBase extends ExtendedObject3D {
   kind: number
   friction: number
@@ -43,35 +56,14 @@ export default class ParticleBase extends ExtendedObject3D {
 
   reaction(particle: ParticleBase) {
     const direction = this._v.subVectors(particle.position, this.position)
-    const dist = direction.length()
+    const dist = direction.length() / 50
     let force
     direction.normalize()
 
-    switch (particle.kind) {
-      case 0:
-        // force = (3 * dist * Math.log(1.35) - 15 * Math.log(1.35) - 3) / (1.35 ** (dist - 5))
-        force = (3*dist-30) / 2 ** (dist - 8)
-        if (force < 0) force /= 3
-        direction.multiplyScalar( force )
-        this.body.applyForce(direction.x, direction.y, direction.z)
-        break
-      case 1:
-        force = (10 * dist * Math.log(1.35) - 100 * Math.log(1.35) - 10) / (1.35 ** (dist - 5))
-        direction.multiplyScalar( force )
-        this.body.applyForce(direction.x, direction.y, direction.z)
-        break
-      case 2:
-        force = (3 * dist * Math.log(1.35) - 30 * Math.log(1.35) - 3) / (1.35 ** (dist - 10))
-        if (force < 0) force /= 5
-        direction.multiplyScalar( force )
-        this.body.applyForce(direction.x, direction.y, direction.z)
-        break
-      default:
-        // pass
-        break
-    }
+    force = calcForce(dist, interactionMat[this.kind][particle.kind])
+    direction.multiplyScalar(force)
+    this.body.applyForce(direction.x, direction.y, direction.z)
   }
-
 
   update() {
     // friction
@@ -82,5 +74,17 @@ export default class ParticleBase extends ExtendedObject3D {
     this._frictionForce.set(this.body.angularVelocity.x, this.body.angularVelocity.y, this.body.angularVelocity.z)
     this._frictionForce.multiplyScalar(-1 * this.friction)
     this.body.applyTorque(this._frictionForce.x, this._frictionForce.y, this._frictionForce.z)
+  }
+}
+
+export function calcForce(r: number, a: number) {
+  const beta = 0.3
+  const max = 1
+  if (r < beta) {
+    return r / beta - 1
+  } else if (beta < r && r < max) {
+    return a * (1 - Math.abs(2 * r - 1 - beta) / (1 - beta))
+  } {
+    return 0
   }
 }
